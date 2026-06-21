@@ -51,6 +51,11 @@ ENV_NAME = "arg-econ-data-env"
 # Nombre lógico del servidor MCP; lo referencia el mcp_toolset del agente.
 MCP_SERVER_NAME = "arg-data"
 
+# ID de la skill custom (lo devuelve register_skill.py). Opcional: si está
+# seteado, se adjunta al agente. Vive en .env (no se versiona). Sin él, el
+# agente funciona igual, solo que sin la skill 'snapshot-cambiario'.
+SKILL_ID = os.environ.get("SKILL_ID")
+
 # Política de networking del sandbox:
 #   "limited"      -> egress restringido salvo el MCP del agente (recomendado).
 #   "unrestricted" -> egress completo.
@@ -139,24 +144,40 @@ def get_or_create_resources(client, mcp_url: str, system_prompt: str, reset: boo
 	# IMPORTANTE: model / system / tools / mcp_servers van en el AGENTE,
 	# nunca en la sesión.
 	print("[setup] creando agente...")
-	agent = client.beta.agents.create(
-		name=AGENT_NAME,
-		model=MODEL,
-		system=system_prompt,
-		# El agente declara el servidor MCP por URL (sin auth: MCP público).
-		mcp_servers=[{"type": "url", "name": MCP_SERVER_NAME, "url": mcp_url}],
-		# Solo el toolset MCP: el agente no necesita bash/archivos.
-		# always_allow: el MCP es de solo lectura, así que sus tools se ejecutan
-		# automáticamente sin pedir confirmación en cada llamada.
-		tools=[{
+	# model / system / tools / mcp_servers van en el AGENTE.
+	# always_allow: el MCP es de solo lectura, así que sus tools se ejecutan
+	# automáticamente sin pedir confirmación en cada llamada.
+	tools = [
+		{
 			"type": "mcp_toolset",
 			"mcp_server_name": MCP_SERVER_NAME,
 			"default_config": {
 				"enabled": True,
 				"permission_policy": {"type": "always_allow"},
 			},
-		}],
+		},
+	]
+
+	agent_kwargs = dict(
+		name=AGENT_NAME,
+		model=MODEL,
+		system=system_prompt,
+		# El agente declara el servidor MCP por URL (sin auth: MCP público).
+		mcp_servers=[{"type": "url", "name": MCP_SERVER_NAME, "url": mcp_url}],
+		tools=tools,
 	)
+
+	# Skill custom opcional. La skill se carga dentro del contenedor mediante
+	# progressive disclosure: el agente lee el SKILL.md sólo cuando aplica. Para
+	# poder leerlo necesita el agent_toolset (read/bash), así que lo sumamos
+	# únicamente cuando hay una skill que adjuntar.
+	if SKILL_ID:
+		tools.append({"type": "agent_toolset_20260401"})
+		agent_kwargs["skills"] = [
+			{"type": "custom", "skill_id": SKILL_ID, "version": "latest"},
+		]
+
+	agent = client.beta.agents.create(**agent_kwargs)
 
 	print("[setup] creando environment...")
 	environment = client.beta.environments.create(
