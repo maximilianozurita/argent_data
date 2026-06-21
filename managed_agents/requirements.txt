@@ -1,0 +1,12 @@
+# SDK oficial de Anthropic. Mínimo (no ==) para tener la superficie
+# Managed Agents (beta): client.beta.agents / environments / sessions.
+# Si al correr falta client.beta.agents, actualizá: pip install -U anthropic
+anthropic>=0.92.0
+
+# Carga el archivo .env en el entorno (setup a mano, sin Docker).
+python-dotenv>=1.0.0
+
+# Backend web mínimo para el frontend de chat (web_app.py). Sirve la página y
+# hace de proxy con streaming hacia la sesión del agente (la API key queda
+# server-side). Opcional: solo si usás el frontend, no el CLI.
+flask>=3.0.0

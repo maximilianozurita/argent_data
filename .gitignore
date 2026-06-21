@@ -1,0 +1,37 @@
+# ── Secretos y configuración local ──────────────────────────────
+# Nunca subir credenciales ni estado local. Los .env.example sí se versionan.
+.env
+*.env
+!.env.example
+.agent_config.json
+
+# Excluido a pedido (es un docstring, no se versiona en este repo).
+MCP/app/__init__.py
+
+# ── Python ───────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+build/
+dist/
+
+# ── Entornos virtuales ───────────────────────────────────────────
+.venv/
+venv/
+env/
+
+# ── Caches de herramientas ───────────────────────────────────────
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+
+# ── IDE / editores ───────────────────────────────────────────────
+.idea/
+.vscode/
+*.swp
+
+# ── OS ───────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db

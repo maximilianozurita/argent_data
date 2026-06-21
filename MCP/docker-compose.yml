@@ -1,0 +1,30 @@
+services:
+  # Servidor MCP de datos económicos argentinos.
+  mcp:
+    build: .
+    # Lee HOST, PORT y DATASET_BASE_URL desde .env (copiá .env.example a .env).
+    env_file:
+      - .env
+    # Mapea el puerto configurado hacia el host (default 8000).
+    ports:
+      - "${PORT:-8000}:${PORT:-8000}"
+    restart: unless-stopped
+
+  # ---------------------------------------------------------------------------
+  # Túnel OPCIONAL con ngrok para exponer el MCP a un agente en la nube.
+  # Solo arranca si lo pedís explícitamente con el profile "tunnel":
+  #     docker compose --profile tunnel up
+  # Requiere NGROK_AUTHTOKEN en .env. El inspector web queda en http://localhost:4040
+  # y ahí ves la URL pública (que el agente debe usar agregándole /mcp).
+  # ---------------------------------------------------------------------------
+  ngrok:
+    image: ngrok/ngrok:latest
+    profiles: ["tunnel"]
+    command: http mcp:${PORT:-8000}
+    environment:
+      NGROK_AUTHTOKEN: ${NGROK_AUTHTOKEN}
+    ports:
+      - "4040:4040"
+    depends_on:
+      - mcp
+    restart: unless-stopped
