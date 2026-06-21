@@ -33,7 +33,7 @@ Prompts `Pregunta: ` and waits for input. Behavior is the same as passing the qu
 
 ## CLI — forced agent recreation
 
-Use `--reset` when you have changed `system_prompt.txt`, the agent model (`AGENT_MODEL`), or when `.agent_config.json` contains stale IDs (resources deleted from the Anthropic account):
+Use `--reset` when you have changed `system_prompt.txt`, the model constant in `orchestrator.py`, or when `.agent_config.json` contains stale IDs (resources deleted from the Anthropic account):
 
 ```bash
 python orchestrator.py --reset "What is the latest inflation index?"
@@ -147,17 +147,11 @@ pip install -U anthropic
 
 ## Changing the agent model
 
-The model is read from the `AGENT_MODEL` environment variable, so you can switch models without editing the code. Set it in `managed_agents/.env`:
-
-```
-# managed_agents/.env
-AGENT_MODEL=claude-opus-4-8
-```
-
-If `AGENT_MODEL` is unset, the orchestrator falls back to a fast, cost-efficient default (`claude-haiku-4-5`). The constant in `managed_agents/orchestrator.py` reflects this:
+Edit the `MODEL` constant in `managed_agents/orchestrator.py`:
 
 ```python
-MODEL = os.environ.get("AGENT_MODEL", "claude-haiku-4-5")
+MODEL = "claude-haiku-4-5"   # default — fast and cost-efficient
+# MODEL = "claude-sonnet-4-5"  # more capable, slower
 ```
 
 After changing the model, run with `--reset` to apply the change to the agent.
