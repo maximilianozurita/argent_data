@@ -155,6 +155,7 @@ Open http://127.0.0.1:5000 in a browser.
 |----------|----------|-------------|
 | `ANTHROPIC_API_KEY` | yes | Your Anthropic API key. |
 | `MCP_URL` | yes | Full public URL of the MCP endpoint, including `/mcp` path. |
+| `AGENT_MODEL` | no | Agent model identifier. Defaults to `claude-haiku-4-5` if unset. E.g. `claude-opus-4-8`. Changing it requires `--reset`. |
 
 ## Verifying the setup
 
@@ -180,7 +181,7 @@ Run this with the MCP SDK installed (`pip install mcp[cli]`).
 
 ## Resetting the agent
 
-If you change `system_prompt.txt`, the model constant, or the MCP URL in `orchestrator.py`, you must recreate the agent:
+If you change `system_prompt.txt`, the agent model (`AGENT_MODEL`), or the MCP URL in `orchestrator.py`, you must recreate the agent:
 
 ```bash
 python orchestrator.py --reset "your question"
