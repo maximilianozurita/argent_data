@@ -34,10 +34,8 @@ import anthropic
 # Configuración (constantes fáciles de cambiar)
 # --------------------------------------------------------------------------- #
 
-# Modelo del agente. Configurable por entorno (AGENT_MODEL); por defecto un
-# modelo eficiente tipo Haiku. Útil para subir a un modelo más capaz sin tocar
-# el código (p. ej. AGENT_MODEL=claude-opus-4-8).
-MODEL = os.environ.get("AGENT_MODEL", "claude-haiku-4-5")
+# Modelo del agente. Por defecto un modelo eficiente tipo Haiku.
+MODEL = "claude-haiku-4-5"
 
 # Archivo con el prompt de sistema (en español).
 SYSTEM_PROMPT_PATH = "system_prompt.txt"
